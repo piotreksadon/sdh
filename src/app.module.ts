@@ -2,7 +2,8 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ZombiesModule } from './zombies/zombies.module';
+import { ZombieModule } from './zombie/zombie.module';
+import { ItemModule } from './item/item.module';
 
 @Module({
   imports: [
@@ -17,7 +18,8 @@ import { ZombiesModule } from './zombies/zombies.module';
       synchronize: true,
       logging: true,
     }),
-    ZombiesModule,
+    ZombieModule,
+    ItemModule,
   ],
   controllers: [AppController],
   providers: [AppService],
