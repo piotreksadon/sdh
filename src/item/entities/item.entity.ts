@@ -1,11 +1,12 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
+import { ZombieEntity } from '../../zombie/entities/zombie.entity';
 
 @Entity('items')
 export class ItemEntity {
   @PrimaryGeneratedColumn()
   item_id: number;
 
-  @Column({ nullable: false, type: 'varchar', length: 100 })
+  @Column({ nullable: false, type: `varchar`, length: 100 })
   name: string;
 
   @Column({ nullable: false, type: `datetime` })
@@ -19,4 +20,7 @@ export class ItemEntity {
 
   @Column({ nullable: false, type: `integer` })
   price_pln: string;
+
+  @ManyToOne(() => ZombieEntity, zombie =>zombie.item)
+  item: ZombieEntity;
 }
