@@ -35,4 +35,3 @@ export class ZombieService {
     return this.zombieRepository.delete(id);
   }
 }
-

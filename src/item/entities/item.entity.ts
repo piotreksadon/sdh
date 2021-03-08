@@ -22,11 +22,11 @@ export class ItemEntity {
   @Column({ nullable: false, type: `integer`, name: 'price_usd' })
   priceUsd: number;
 
-  @Column({ nullable: false, type: `integer` })
-  priceEu: string;
+  @Column({ nullable: false, type: `integer`, name: 'price_Eu' })
+  priceEur: number;
 
-  @Column({ nullable: false, type: `integer` })
-  price_pln: string;
+  @Column({ nullable: false, type: `integer`, name: 'price_pln' })
+  price: number;
 
   @ManyToMany(() => ZombieEntity)
   @JoinTable()
