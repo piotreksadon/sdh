@@ -4,7 +4,6 @@ export class ZombieDto {
   @IsString()
   @MinLength(3)
   @MaxLength(100)
-  public name: string;
-
-  public created?: Date;
+  name: string;
+  created_at: string;
 }

@@ -1,15 +1,22 @@
-import { Controller, Get, Post, Body, Put, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Put,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { ZombieService } from './zombie.service';
-import { ZombieDto } from './dto/create-zombie.dto';
-import { UpdateZombieDto } from './dto/update-zombie.dto';
+import { ZombieDto } from './dto/zombie.dto';
 
 @Controller('zombie')
 export class ZombieController {
   constructor(private readonly zombieService: ZombieService) {}
 
   @Post()
-  create(@Body() createZombieDto: ZombieDto) {
-    return this.zombieService.create(createZombieDto);
+  create(@Body() ZombieDto: ZombieDto) {
+    return this.zombieService.create(ZombieDto);
   }
 
   @Get()
@@ -18,13 +25,17 @@ export class ZombieController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.zombieService.findOne(+id);
+  public async getOne(@Param('id') id: number): Promise<ZombieDto> {
+    const zombie = await this.zombieService.findOne(id);
+    if (!zombie) {
+      throw new Error('Zombie not found');
+    }
+    return this.zombieService.findOne(+ZombieDto.name);
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() updateZombieDto: UpdateZombieDto) {
-    return this.zombieService.update(+id, updateZombieDto);
+  update(@Param() params: ZombieDto, @Body() data: ZombieDto) {
+    return this.zombieService.update(+params, data);
   }
 
   @Delete(':id')

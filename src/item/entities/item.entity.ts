@@ -1,26 +1,34 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  ManyToMany,
+  JoinTable,
+} from 'typeorm';
 import { ZombieEntity } from '../../zombie/entities/zombie.entity';
 
 @Entity('items')
 export class ItemEntity {
   @PrimaryGeneratedColumn()
-  item_id: number;
+  id: number;
 
   @Column({ nullable: false, type: `varchar`, length: 100 })
   name: string;
 
-  @Column({ nullable: false, type: `datetime` })
+  @CreateDateColumn()
   created_at: string;
 
-  @Column({ nullable: false, type: `integer` })
-  price_usd: number;
+  @Column({ nullable: false, type: `integer`, name: 'price_usd' })
+  priceUsd: number;
 
   @Column({ nullable: false, type: `integer` })
-  price_eu: string;
+  priceEu: string;
 
   @Column({ nullable: false, type: `integer` })
   price_pln: string;
 
-  @ManyToOne(() => ZombieEntity, zombie =>zombie.item)
-  item: ZombieEntity;
+  @ManyToMany(() => ZombieEntity)
+  @JoinTable()
+  zombie: ZombieEntity[];
 }

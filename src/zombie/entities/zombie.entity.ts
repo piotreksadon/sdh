@@ -1,10 +1,10 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToMany } from 'typeorm';
 import { ItemEntity } from '../../item/entities/item.entity';
 
 @Entity('zombie')
 export class ZombieEntity {
   @PrimaryGeneratedColumn()
-  zombie_id: number;
+  id: number;
 
   @Column({ nullable: false, type: 'varchar', length: 100 })
   name: string;
@@ -12,6 +12,6 @@ export class ZombieEntity {
   @Column({ nullable: false, type: `datetime` })
   created_at: string;
 
-  @OneToMany(() => ItemEntity, (item) => item_id.zombie_id)
+  @ManyToMany(() => ItemEntity)
   item: ItemEntity[];
 }
