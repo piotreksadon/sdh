@@ -14,13 +14,13 @@ export class ItemService {
     @InjectRepository(ItemEntity)
     private itemRepository: Repository<ItemEntity>,
   ) {}
-  @Cron(`*/3 * * * * *`)
+  @Cron(`0 0 0 * * *`)
   async handleCron() {
     const itemsData = await axios.get(itemURL);
     const nbpData = await axios.get(nbpURL);
     const rates = nbpData.data[0].rates;
     const items = itemsData.data.items;
-    console.log(items);
+    const timestamp = itemsData.data.timestamp;
 
     const currencies = rates.filter((element) => {
       return element.code === 'EUR' || element.code === 'USD';
@@ -32,16 +32,28 @@ export class ItemService {
     const priceUsd = { bid: usd.bid };
     const priceEur = { bid: euro.bid };
 
-    const itemEntity = items.map((element) => {
+    const itemEntities = items.map((element) => {
+      const date = new Date(+timestamp);
       const itemEntity = new ItemEntity();
       itemEntity.name = element.name;
       itemEntity.price = element.price;
-      itemEntity.priceUsd = element.price * priceUsd.bid;
-      itemEntity.priceEur = element.price * priceEur.bid;
+      itemEntity.priceUsd = element.price / priceUsd.bid;
+      itemEntity.priceEur = element.price / priceEur.bid;
+      itemEntity.createdAt = date.toISOString().split('T')[0];
 
       return itemEntity;
     });
-    console.log(itemEntity);
-    await this.itemRepository.save(itemEntity);
+    await this.itemRepository.save(itemEntities);
+  }
+
+  async findOne(id: number) {
+    return this.itemRepository.findOne(id);
+  }
+
+  findAll() {
+    const date = new Date();
+    return this.itemRepository.find({
+      where: { createdAt: date.toISOString().split('T')[0] },
+    });
   }
 }

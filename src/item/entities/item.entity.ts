@@ -16,8 +16,8 @@ export class ItemEntity {
   @Column({ nullable: false, type: `varchar`, length: 100 })
   name: string;
 
-  @CreateDateColumn()
-  created_at: string;
+  @Column({ nullable: false, type: 'date', name: 'created_at' })
+  createdAt: string;
 
   @Column({ nullable: false, type: `integer`, name: 'price_usd' })
   priceUsd: number;
@@ -29,6 +29,5 @@ export class ItemEntity {
   price: number;
 
   @ManyToMany(() => ZombieEntity)
-  @JoinTable()
   zombie: ZombieEntity[];
 }
