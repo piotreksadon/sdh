@@ -16,4 +16,4 @@ $ npm run start:dev
 $ npm run start:prod
 ```
 
-[api documentation](./docs.png)
+![api documentation](./docs.png)
