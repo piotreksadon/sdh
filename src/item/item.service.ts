@@ -19,6 +19,8 @@ export class ItemService {
     const itemsData = await axios.get(itemURL);
     const nbpData = await axios.get(nbpURL);
     const rates = nbpData.data[0].rates;
+    const items = itemsData.data.items;
+    console.log(items);
 
     const currencies = rates.filter((element) => {
       return element.code === 'EUR' || element.code === 'USD';
@@ -27,7 +29,6 @@ export class ItemService {
     const usd = currencies[0];
     const euro = currencies[1];
 
-    const items = [];
     const priceUsd = { bid: usd.bid };
     const priceEur = { bid: euro.bid };
 
@@ -40,6 +41,7 @@ export class ItemService {
 
       return itemEntity;
     });
+    console.log(itemEntity);
     await this.itemRepository.save(itemEntity);
   }
 }
