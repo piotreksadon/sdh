@@ -78,7 +78,6 @@ export class ZombieService {
   }
 
   getZombieItems() {
-    // return this.itemService.findAll();
     return this.zombieRepository
       .createQueryBuilder()
       .select('name, price, SUM(priceUsd) as total_usd')
