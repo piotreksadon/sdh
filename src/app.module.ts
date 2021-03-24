@@ -9,15 +9,15 @@ import { ScheduleModule } from '@nestjs/schedule';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
-      type: 'mysql',
-      host: 'localhost',
-      port: 3307,
-      username: 'root',
-      password: 'root',
-      database: 'zombie',
+      type: process.env.DB_TYPE as 'mysql',
+      host: process.env.DB_HOST,
+      port: +process.env.PORT,
+      username: process.env.DB_USERNAME,
+      password: process.env.PASSWORD,
+      database: process.env.DB,
       entities: [`${__dirname}/**/**/*.entity{.ts,.js}`],
-      synchronize: true,
-      logging: true,
+      synchronize: process.env.SYNCHRONIZE.toLowerCase() === 'true',
+      logging: process.env.LOGGING.toLowerCase() === 'true',
     }),
     ZombieModule,
     ItemModule,

@@ -13,8 +13,7 @@ import { ZombieDto } from './dto/zombie.dto';
 
 @Controller('zombie')
 export class ZombieController {
-  constructor(private readonly zombieService: ZombieService) {
-  }
+  constructor(private readonly zombieService: ZombieService) {}
 
   @Post()
   create(@Body() ZombieDto: ZombieDto) {
@@ -25,7 +24,6 @@ export class ZombieController {
   findAll() {
     return this.zombieService.findAll();
   }
-
 
   @Put(':id')
   update(@Param('id') id: string, @Body() data: ZombieDto) {

@@ -11,8 +11,7 @@ export class ZombieService {
     @InjectRepository(ZombieEntity)
     private zombieRepository: Repository<ZombieEntity>,
     private itemService: ItemService,
-  ) {
-  }
+  ) {}
 
   create(data: ZombieDto) {
     return this.zombieRepository.save({
@@ -46,7 +45,6 @@ export class ZombieService {
   }
 
   async addItemToZombie(id: number, itemId: number) {
-
     const zombie = await this.zombieRepository.findOne(id, {
       relations: ['item'],
     });
@@ -84,6 +82,9 @@ export class ZombieService {
   }
 
   getZombieItems() {
-    return this.itemService.findAll();
+    // return this.itemService.findAll();
+    return this.zombieRepository.createQueryBuilder()
+      .select('name, price, SUM(priceUsd) as total_usd')
+      .getMany();
   }
 }
