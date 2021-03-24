@@ -72,18 +72,15 @@ export class ZombieService {
     }
 
     zombie.item = zombie.item.filter((item) => {
-      if (item.id === itemId) {
-        return false;
-      }
-
-      return true;
+      return item.id !== itemId;
     });
     return this.zombieRepository.save(zombie);
   }
 
   getZombieItems() {
     // return this.itemService.findAll();
-    return this.zombieRepository.createQueryBuilder()
+    return this.zombieRepository
+      .createQueryBuilder()
       .select('name, price, SUM(priceUsd) as total_usd')
       .getMany();
   }
