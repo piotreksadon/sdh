@@ -1,28 +1,31 @@
 import { Injectable } from '@nestjs/common';
-import { Cron } from '@nestjs/schedule';
 import axios from 'axios';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ItemEntity } from './entities/item.entity';
+import { Cron } from '@nestjs/schedule';
 
-const itemURL = 'https://zombie-items-api.herokuapp.com/api/items';
-const nbpURL = 'http://api.nbp.pl/api/exchangerates/tables/C/today/';
 
 @Injectable()
 export class ItemService {
   constructor(
     @InjectRepository(ItemEntity)
     private itemRepository: Repository<ItemEntity>,
-  ) {}
+  ) {
+  }
 
   // @Cron(`0 0 0 * * *`)
-  // @Cron(`*/8 * * * * *`)
+  @Cron(`*/8 * * * * *`)
   async handleCron() {
+    const getNbpData = axios.get('http://api.nbp.pl/api/exchangerates/tables/C/today/')
+    const getItemData = axios.get('https://zombie-items-api.herokuapp.com/api/items')
+
+    const result = await Promise.all([getNbpData, getItemData])
     const currencies = this.isSaturdayOrSunday()
       ? this.getMockedNbpData()
-      : await this.getCurrencies();
+      : await this.getCurrencies(result[0]);
 
-    const itemEntities = await this.getItems(currencies);
+    const itemEntities = await this.getItems(result[1], currencies);
 
     await this.itemRepository.save(itemEntities);
   }
@@ -55,8 +58,7 @@ export class ItemService {
     });
   }
 
-  private async getCurrencies(): Promise<{ usd: any; euro: any }> {
-    const nbpData = await axios.get(nbpURL);
+  private async getCurrencies(nbpData): Promise<{ usd: any; euro: any }> {
     const rates = nbpData.data[0].rates;
 
     const currencies = rates.filter((element) => {
@@ -70,17 +72,17 @@ export class ItemService {
       usd: usd,
       euro: euro,
     };
+
   }
 
-  async getItems(currencies: {
+  async getItems(itemsData, currencies: {
     usd: { bid: number };
     euro: { bid: number };
-  }): Promise<ItemEntity[]> {
-    const itemsData = await axios.get(itemURL);
+  }): Promise<ItemEntity> {
     const items = itemsData.data.items;
     const timestamp = itemsData.data.timestamp;
 
-    const itemEntities = items.map((item) => {
+    return items.map((item) => {
       const date = new Date(+timestamp);
       const itemEntity = new ItemEntity();
       itemEntity.name = item.name;
@@ -91,7 +93,5 @@ export class ItemService {
 
       return itemEntity;
     });
-
-    return itemEntities;
   }
 }
